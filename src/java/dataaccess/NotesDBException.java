@@ -9,7 +9,16 @@ package dataaccess;
  *
  * @author 652343
  */
-public class NotesDBException
+public class NotesDBException extends Exception
   {
-    
+
+    public NotesDBException()
+      {
+
+      }
+
+    public NotesDBException(String msg)
+      {
+        super(msg);
+      }
   }

@@ -15,32 +15,52 @@
     </head>
     <body>
         <h1>Notes!</h1>
-        <form action="notes" method="post">
-            <table>
+
+        <table>
+            <tr>
+                <th width="250">Date Created</th>
+                <th width="200">Title</th>
+            </tr>
+            <c:forEach var="note" items="${notes}">
                 <tr>
-                    <th>Date Created</th>
-                    <th>Title</th>
-                </tr>
-                <c:forEach var="note" items="${notes}">
-                    <tr>
-
-                        <td>${note.datecreated}</td>
-                        <td>${note.title}</td>
-
+                    <td width="250">${note.datecreated}</td>
+                    <td width="200">${note.title}</td>
+                    <td>   
+                        <form action="<c:url value='notes'>
+                                  <c:param name='action' value='view'/>
+                                  <c:param name='id' value='${note.noteid}'/></c:url>" method="post">
+                                  <input type="submit" value="Edit">
+                              </form>
+                        </td>
                     </tr>
-                </c:forEach>
-            </table>
+            </c:forEach>
+        </table>
 
+        <br><br><br>
+        <c:if test="${edit eq false}">
+            <form action="<c:url value='notes'>
+                      <c:param name='action' value='add'/></c:url>" method="post">
+                      <h2>Add Note</h2>
+                      <input type="text" name="inputTitle" placeholder="title" value="${note.title}"><br>
+                  <textarea name="inputContents" rows="10" cols="40" placeholder="type a note...">${note.contents}</textarea><br>
+                  <input type="submit" value="Add">
+            </form>
+        </c:if>
 
-            <input type="hidden" name="actionType" value="editNote">
-        </form>
-
-        <form action="notes" method="post">
-
-            <h2>Add Note</h2>
-            <input type="text" name="inputTitle"><br>
-            <textarea name="inputNote" rows="10" cols="40"></textarea>
-            <input type="hidden" name="actionType" value="addNote">
-        </form>
+        <c:if test="${edit eq true}">
+            <form action="<c:url value='notes'>
+                      <c:param name='action' value='delete'/>
+                      <c:param name='id' value='${note.noteid}'/></c:url>" method="post">
+                      <input type="submit" value="Delete">
+                  </form>
+                  <form action="<c:url value='notes'>
+                      <c:param name='action' value='edit'/>
+                      <c:param name='id' value='${note.noteid}'/></c:url>" method="post">
+                      <h2>Edit Note</h2>
+                      <input type="text" name="inputTitle" value="${note.title}"><br>
+                  <textarea name="inputContents" rows="10" cols="40">${note.contents}</textarea><br>
+                  <input type="submit" value="Save">
+            </form>
+        </c:if>
     </body>
 </html>

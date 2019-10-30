@@ -15,6 +15,7 @@ import services.NoteService;
  */
 public class NoteServlet extends HttpServlet
   {
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
@@ -22,16 +23,54 @@ public class NoteServlet extends HttpServlet
         NoteService ns = new NoteService();
         List<Note> notes = ns.getAll();
         request.setAttribute("notes", notes);
-        
-       getServletContext().getRequestDispatcher("/WEB-INF/notes.jsp").forward(request, response);
+        String action = (String) request.getParameter("action");
+        if (action == null)
+          {
+            request.setAttribute("edit", false);
+
+          }
+        getServletContext().getRequestDispatcher("/WEB-INF/notes.jsp").forward(request, response);
+
       }
 
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException
       {
+        NoteService ns = new NoteService();
+        String action = (String) request.getParameter("action");
+        String title = (String) request.getParameter("inputTitle");
+        String contents = (String) request.getParameter("inputContents");
         
-      }
+        if(action.equals("add"))
+          {
+            request.setAttribute("edit", false);
+            ns.insert(contents, title);
+          }
+        else if(action.equals("view"))
+          {
+            request.setAttribute("edit", true);
+            request.setAttribute("note", ns.get(Integer.valueOf(request.getParameter("id"))));
+          }
+        else if(action.equals("delete"))
+          {
+            request.setAttribute("edit", true);
+            ns.delete(Integer.valueOf(request.getParameter("id")));
+          }
+        else if (action.equals("edit"))
+          {
+            request.setAttribute("edit", true);
+           
+            Note n = ns.get(Integer.valueOf(request.getParameter("id")));           
+            ns.update(Integer.valueOf(request.getParameter("id")), title, contents);
+             request.setAttribute("note", ns.get(Integer.valueOf(request.getParameter("id"))));
+          }
+        
 
+        List<Note> notes = ns.getAll();
+        request.setAttribute("notes", notes);
+
+        getServletContext().getRequestDispatcher("/WEB-INF/notes.jsp").forward(request, response);
+      }
 
   }
